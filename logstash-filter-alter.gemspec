@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
 
   s.name            = 'logstash-filter-alter'
-  s.version         = '0.1.0'
+  s.version         = '0.1.1'
   s.licenses        = ['Apache License (2.0)']
   s.summary         = "The alter filter allows you to do general alterations to fields that are not included in the normal mutate filter"
   s.description     = "The alter filter allows you to do general alterations to fields that are not included in the normal mutate filter"
