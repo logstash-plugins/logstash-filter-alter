@@ -17,7 +17,7 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
   # if the actual content is equal to the expected one.
   #
   # Example:
-  #
+  # [source,ruby]
   #     filter {
   #       alter {
   #         condrewrite => [ 
@@ -33,7 +33,7 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
   # if the content of another field is equal to the expected one.
   #
   # Example:
-  #
+  # [source,ruby]
   #     filter {
   #       alter {
   #         condrewriteother => [ 
@@ -48,7 +48,7 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
   # Sets the value of field_name to the first nonnull expression among its arguments.
   #
   # Example:
-  #
+  # [source,ruby]
   #     filter {
   #       alter {
   #         coalesce => [
