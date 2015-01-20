@@ -11,7 +11,6 @@ require "logstash/namespace"
 # be merged into the 'mutate' filter in future versions.
 class LogStash::Filters::Alter < LogStash::Filters::Base
   config_name "alter"
-  milestone 1
   
   # Change the content of the field to the specified value
   # if the actual content is equal to the expected one.
