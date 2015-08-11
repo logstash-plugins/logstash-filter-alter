@@ -96,8 +96,8 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
         :subst_array => @coalesce
       }
     end
-    
-       
+
+
   end # def register
   
   public
@@ -117,7 +117,6 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
       field = config[:field]
       expected = config[:expected]
       replacement = config[:replacement]
-
       if event[field].is_a?(Array)
         event[field] = event[field].map do |v|
           if v == event.sprintf(expected)
@@ -128,7 +127,10 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
         end
       else
         if event[field] == event.sprintf(expected)
-          event[field] = event.sprintf(replacement)
+          # The usage of encode(UTF-8) is a workarround here until the new
+          # version of logstash-core is released and include the fix for this
+          # after that, this should be removed.
+          event[field] = event.sprintf(replacement).encode(Encoding::UTF_8)
         end
       end
     end # @condrewrite_parsed.each
