@@ -102,7 +102,7 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
   
   public
   def filter(event)
-    return unless filter?(event)
+    
 
     condrewrite(event) if @condrewrite
     condrewriteother(event) if @condrewriteother
