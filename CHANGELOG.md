@@ -1,3 +1,5 @@
+# 2.0.4
+  - New dependency requirements for logstash-core for the 5.0 release
 ## 2.0.2
   - workaround failing test by forcing text out of event.sprintf to be
     always in UTF-8, when this is fix in logstash-core the changes could
