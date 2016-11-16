@@ -21,7 +21,7 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
   #       alter {
   #         condrewrite => [ 
   #              "field_name", "expected_value", "new_value",
-  #              "field_name2", "expected_value2, "new_value2",
+  #              "field_name2", "expected_value2", "new_value2",
   #              ....
   #            ]
   #       }
@@ -37,7 +37,7 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
   #       alter {
   #         condrewriteother => [ 
   #              "field_name", "expected_value", "field_name_to_change", "value",
-  #              "field_name2", "expected_value2, "field_name_to_change2", "value2",
+  #              "field_name2", "expected_value2", "field_name_to_change2", "value2",
   #              ....
   #         ]
   #       }
