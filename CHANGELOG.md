@@ -1,3 +1,5 @@
+# 3.0.0
+  - bumped up logstash-core-plugin-api dependency, changed direct field references to event get and set methods
 # 2.0.5
   - Depend on logstash-core-plugin-api instead of logstash-core, removing the need to mass update plugins on major releases of logstash
 # 2.0.4

@@ -117,20 +117,21 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
       field = config[:field]
       expected = config[:expected]
       replacement = config[:replacement]
-      if event[field].is_a?(Array)
-        event[field] = event[field].map do |v|
+      if event.get(field).is_a?(Array)
+        new_array = event.get(field).map do |v|
           if v == event.sprintf(expected)
             v = event.sprintf(replacement)
           else
             v
           end
         end
+        event.set(field, new_array)
       else
-        if event[field] == event.sprintf(expected)
+        if event.get(field) == event.sprintf(expected)
           # The usage of encode(UTF-8) is a workarround here until the new
           # version of logstash-core is released and include the fix for this
           # after that, this should be removed.
-          event[field] = event.sprintf(replacement).encode(Encoding::UTF_8)
+          event.set(field, event.sprintf(replacement).encode(Encoding::UTF_8))
         end
       end
     end # @condrewrite_parsed.each
@@ -144,15 +145,15 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
       replacement_field = config[:replacement_field]
       replacement_value = config[:replacement_value]
 
-      if event[field].is_a?(Array)
-        event[field].each do |v|
+      if event.get(field).is_a?(Array)
+        event.get(field).each do |v|
           if v == event.sprintf(expected)
-            event[replacement_field] = event.sprintf(replacement_value)
+            event.set(replacement_field, event.sprintf(replacement_value))
           end
         end
       else
-        if event[field] == event.sprintf(expected)
-          event[replacement_field] = event.sprintf(replacement_value)
+        if event.get(field) == event.sprintf(expected)
+          event.set(replacement_field, event.sprintf(replacement_value))
         end
       end
     end # @condrewriteother_parsed.each
@@ -167,7 +168,7 @@ class LogStash::Filters::Alter < LogStash::Filters::Base
       substitution_parsed = subst_array.map { |x| event.sprintf(x) }
       not_nul_index = substitution_parsed.find_index { |x| not x.nil? and not x.eql?("nil") and not (not x.index("%").nil? && x.match(/%\{[^}]\}/).nil?) }
       if not not_nul_index.nil?
-        event[field] = substitution_parsed[not_nul_index]
+        event.set(field, substitution_parsed[not_nul_index])
       end
     end # @coalesce_parsed.each
   end # def coalesce
