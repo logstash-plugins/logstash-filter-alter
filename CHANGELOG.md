@@ -1,3 +1,6 @@
+## 3.0.2
+  - Fix some documentation issues
+
 # 3.0.0
   - bumped up logstash-core-plugin-api dependency, changed direct field references to event get and set methods
 # 2.0.5
