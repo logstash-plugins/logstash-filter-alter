@@ -1,9 +1,9 @@
 Gem::Specification.new do |s|
 
   s.name            = 'logstash-filter-alter'
-  s.version         = '3.0.2'
+  s.version         = '3.0.3'
   s.licenses        = ['Apache License (2.0)']
-  s.summary         = "The alter filter allows you to do general alterations to fields that are not included in the normal mutate filter"
+  s.summary         = "Performs general alterations to fields that the `mutate` filter does not handle"
   s.description     = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
   s.authors         = ["Elastic"]
   s.email           = 'info@elastic.co'
