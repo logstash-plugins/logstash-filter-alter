@@ -15,11 +15,11 @@ describe LogStash::Filters::Alter do
     CONFIG
 
     sample("rewrite-me"  => "hello") do
-      insist { subject.get("rewrite-me") } == "goodbye"
+      expect(subject.get("rewrite-me")).to eq("goodbye")
     end
 
     sample("rewrite-me"  => "greetings") do
-      insist { subject.get("rewrite-me") } == "greetings"
+      expect(subject.get("rewrite-me")).to eq("greetings")
     end
   end
 
@@ -34,23 +34,23 @@ describe LogStash::Filters::Alter do
 
     sample("rewrite-me"  => "hello", "test" => "hello",
            "rewrite-value" => "goodbye") do
-      insist { subject.get("rewrite-me") } == "goodbye"
+      expect(subject.get("rewrite-me")).to eq("goodbye")
     end
 
     sample("rewrite-me"  => "hello") do
-      insist { subject.get("rewrite-me") } == "hello"
+      expect(subject.get("rewrite-me")).to eq("hello")
     end
 
     sample("rewrite-me"  => "%{test}") do
-      insist { subject.get("rewrite-me") } == "%{rewrite-value}"
+      expect(subject.get("rewrite-me")).to eq("%{rewrite-value}")
     end
 
     sample("rewrite-me"  => "hello", "test" => "hello") do
-      insist { subject.get("rewrite-me") } == "%{rewrite-value}"
+      expect(subject.get("rewrite-me")).to eq("%{rewrite-value}")
     end
 
     sample("rewrite-me"  => "greetings", "test" => "hello") do
-      insist { subject.get("rewrite-me") } == "greetings"
+      expect(subject.get("rewrite-me")).to eq("greetings")
     end
   end
 
@@ -64,20 +64,20 @@ describe LogStash::Filters::Alter do
     CONFIG
 
     sample("test-me"  => "hello") do
-      insist { subject.get("rewrite-me") } == "goodbye"
+      expect(subject.get("rewrite-me")).to eq("goodbye")
     end
 
     sample("test-me"  => "hello", "rewrite-me"  => "hello2") do
-      insist { subject.get("rewrite-me") } == "goodbye"
+      expect(subject.get("rewrite-me")).to eq("goodbye")
     end
 
     sample("test-me"  => "greetings") do
-      insist { subject.get("rewrite-me") }.nil?
+      expect(subject.get("rewrite-me")).to be_nil
     end
 
     sample("test-me"  => "greetings",
       "rewrite-me"  => "hello2") do
-      insist { subject.get("rewrite-me") } == "hello2"
+      expect(subject.get("rewrite-me")).to eq("hello2")
     end
   end
 
@@ -91,7 +91,7 @@ describe LogStash::Filters::Alter do
     CONFIG
 
     sample("coalesce-me"  => "Hello") do
-      insist { subject.get("coalesce-me") } == "mydefault" 
+      expect(subject.get("coalesce-me")).to eq("mydefault")
     end
   end
 end
