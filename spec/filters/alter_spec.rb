@@ -3,95 +3,104 @@
 require_relative '../spec_helper'
 require "logstash/filters/alter"
 
+def make_filter(config_hash)
+  f = LogStash::Filters::Alter.new(config_hash)
+  f.register
+  f
+end
+
+def make_event(data)
+  LogStash::Event.new(data)
+end
+
 describe LogStash::Filters::Alter do
 
   describe "condrewrite with static values" do
-    config <<-CONFIG
-    filter {
-      alter {
-        condrewrite => ["rewrite-me", "hello", "goodbye"]
-      }
-    }
-    CONFIG
+    let(:filter) { make_filter("condrewrite" => ["rewrite-me", "hello", "goodbye"]) }
 
-    sample("rewrite-me"  => "hello") do
-      expect(subject.get("rewrite-me")).to eq("goodbye")
+    it "rewrites matching field" do
+      event = make_event("rewrite-me" => "hello")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to eq("goodbye")
     end
 
-    sample("rewrite-me"  => "greetings") do
-      expect(subject.get("rewrite-me")).to eq("greetings")
+    it "leaves non-matching field unchanged" do
+      event = make_event("rewrite-me" => "greetings")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to eq("greetings")
     end
   end
 
   describe "condrewrite with dynamic values" do
-    config <<-CONFIG
-    filter {
-      alter {
-        condrewrite => ["rewrite-me", "%{test}", "%{rewrite-value}"]
-      }
-    }
-    CONFIG
+    let(:filter) { make_filter("condrewrite" => ["rewrite-me", "%{test}", "%{rewrite-value}"]) }
 
-    sample("rewrite-me"  => "hello", "test" => "hello",
-           "rewrite-value" => "goodbye") do
-      expect(subject.get("rewrite-me")).to eq("goodbye")
+    it "rewrites when field matches dynamic expected value" do
+      event = make_event("rewrite-me" => "hello", "test" => "hello", "rewrite-value" => "goodbye")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to eq("goodbye")
     end
 
-    sample("rewrite-me"  => "hello") do
-      expect(subject.get("rewrite-me")).to eq("hello")
+    it "leaves field unchanged when test field is absent" do
+      event = make_event("rewrite-me" => "hello")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to eq("hello")
     end
 
-    sample("rewrite-me"  => "%{test}") do
-      expect(subject.get("rewrite-me")).to eq("%{rewrite-value}")
+    it "leaves field unchanged when value is literal %{test}" do
+      event = make_event("rewrite-me" => "%{test}")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to eq("%{rewrite-value}")
     end
 
-    sample("rewrite-me"  => "hello", "test" => "hello") do
-      expect(subject.get("rewrite-me")).to eq("%{rewrite-value}")
+    it "leaves field unchanged when rewrite-value field is absent" do
+      event = make_event("rewrite-me" => "hello", "test" => "hello")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to eq("%{rewrite-value}")
     end
 
-    sample("rewrite-me"  => "greetings", "test" => "hello") do
-      expect(subject.get("rewrite-me")).to eq("greetings")
+    it "leaves non-matching field unchanged" do
+      event = make_event("rewrite-me" => "greetings", "test" => "hello")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to eq("greetings")
     end
   end
 
   describe "condrewriteother" do
-    config <<-CONFIG
-    filter {
-      alter {
-        condrewriteother => ["test-me", "hello", "rewrite-me","goodbye"]
-      }
-    }
-    CONFIG
+    let(:filter) { make_filter("condrewriteother" => ["test-me", "hello", "rewrite-me", "goodbye"]) }
 
-    sample("test-me"  => "hello") do
-      expect(subject.get("rewrite-me")).to eq("goodbye")
+    it "sets target field when source matches" do
+      event = make_event("test-me" => "hello")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to eq("goodbye")
     end
 
-    sample("test-me"  => "hello", "rewrite-me"  => "hello2") do
-      expect(subject.get("rewrite-me")).to eq("goodbye")
+    it "overwrites target field when source matches" do
+      event = make_event("test-me" => "hello", "rewrite-me" => "hello2")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to eq("goodbye")
     end
 
-    sample("test-me"  => "greetings") do
-      expect(subject.get("rewrite-me")).to be_nil
+    it "does not set target field when source does not match" do
+      event = make_event("test-me" => "greetings")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to be_nil
     end
 
-    sample("test-me"  => "greetings",
-      "rewrite-me"  => "hello2") do
-      expect(subject.get("rewrite-me")).to eq("hello2")
+    it "leaves target field unchanged when source does not match" do
+      event = make_event("test-me" => "greetings", "rewrite-me" => "hello2")
+      filter.filter(event)
+      expect(event.get("rewrite-me")).to eq("hello2")
     end
   end
 
   describe "coalesce" do
-    config <<-CONFIG
-    filter {
-      alter {
-        coalesce => ["coalesce-me", "%{non-existing-field}", "mydefault"]
-      }
-    }
-    CONFIG
+    let(:filter) { make_filter("coalesce" => ["coalesce-me", "%{non-existing-field}", "mydefault"]) }
 
-    sample("coalesce-me"  => "Hello") do
-      expect(subject.get("coalesce-me")).to eq("mydefault")
+    it "sets field to first non-null resolved value" do
+      event = make_event("coalesce-me" => "Hello")
+      filter.filter(event)
+      expect(event.get("coalesce-me")).to eq("mydefault")
     end
   end
 end
+
